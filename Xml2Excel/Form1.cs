@@ -443,6 +443,13 @@ namespace Xml2Excel
             sheet.GetRow(0).CreateCell(8).SetCellValue("床號"); //p9
             sheet.GetRow(0).CreateCell(9).SetCellValue("時間起"); //p14
             sheet.GetRow(0).CreateCell(10).SetCellValue("時間迄"); //d28
+            sheet.GetRow(0).CreateCell(11).SetCellValue("天數"); //d28
+          
+
+            HSSFCellStyle cs = (HSSFCellStyle)workbook.CreateCellStyle();
+            //Format格式為數字
+            cs.DataFormat = HSSFDataFormat.GetBuiltinFormat("0");
+
 
             n = 0;
             rowNumber = 0;
@@ -477,9 +484,10 @@ namespace Xml2Excel
 
                 XmlNode childNodeBody = node.SelectSingleNode("dbody");
                 XmlNodeList dbodyNodeList = childNodeBody.ChildNodes;
-
+                outdate = "";
                 foreach (XmlNode dbodyChild in dbodyNodeList)
                 {
+
                     if (dbodyChild.Name == "d3") //身份證
                     {
                         pID = dbodyChild.InnerText;
@@ -501,7 +509,14 @@ namespace Xml2Excel
 
                     if (dbodyChild.Name == "d20") //主治醫師
                     {
-                        dr = dbodyChild.InnerText;
+                        if (dbodyChild.InnerText == "S122409549")
+                            dr = "林典雍";
+                        if (dbodyChild.InnerText == "P122217324")
+                            dr = "陳柏偉";
+                        if (dbodyChild.InnerText == "N122802895")
+                            dr = "詹永騰";
+                        if (dbodyChild.InnerText == "N220234435")
+                            dr = "許珮珊";
                     }
 
                     if (dbodyChild.Name == "pdata")
@@ -527,8 +542,14 @@ namespace Xml2Excel
 
                         if (orderCode != null)
                         {
-                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && Convert.ToInt32(stime) < (1031100))
+                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(stime) < 1031200))
                             {
+                                if (orderCode == "03057B")
+                                    orderCode = "急性";
+                                if (orderCode == "04002B")
+                                    orderCode = "慢性";
+                                if (orderCode == "04011B")
+                                    orderCode = "院外適應";
                                 n++;
                                 rowNumber++;
                                 sheet.CreateRow(rowNumber).CreateCell(0).SetCellValue(pID);
@@ -536,12 +557,16 @@ namespace Xml2Excel
                                 sheet.GetRow(rowNumber).CreateCell(2).SetCellValue(serNo);
                                 sheet.GetRow(rowNumber).CreateCell(3).SetCellValue(name);
                                 sheet.GetRow(rowNumber).CreateCell(4).SetCellValue(indate);
+                                sheet.GetRow(rowNumber).GetCell(4).CellStyle = cs;
                                 sheet.GetRow(rowNumber).CreateCell(5).SetCellValue(outdate);
+                                sheet.GetRow(rowNumber).GetCell(5).CellStyle = cs;
                                 sheet.GetRow(rowNumber).CreateCell(6).SetCellValue(dr);
                                 sheet.GetRow(rowNumber).CreateCell(7).SetCellValue(orderCode);
                                 sheet.GetRow(rowNumber).CreateCell(8).SetCellValue(bedno);
                                 sheet.GetRow(rowNumber).CreateCell(9).SetCellValue(stime);
+                                sheet.GetRow(rowNumber).GetCell(9).CellStyle = cs;
                                 sheet.GetRow(rowNumber).CreateCell(10).SetCellValue(etime);
+                                sheet.GetRow(rowNumber).GetCell(10).CellStyle = cs;
                             }
                         }
                     }
@@ -584,19 +609,20 @@ namespace Xml2Excel
             int sdate, edate; //時間起迄
             int n;
 
-            int originsdate = 1031001;
-            int originedate = 1031031;
+            int originsdate = 1031101;
+            int originedate = 1031130;
+            int monthDays = originedate - originsdate + 1;
             for (int rowNumber1 = 1; rowNumber1 < sworkbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
             {
                 var cell1 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(6); //主治醫師
-                var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(9); //主治醫師
-                var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(10); //主治醫師
-
-
+                var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(9); //時間起
+                var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(10); //時間迄
+                var cell4 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(7); //急、慢、院外適應
+                
                 if (cell1 != null)
                 {
                     //MessageBox.Show(cell1.ToString());
-                    if (cell1.ToString() == "許珮珊")
+                    if (cell1.ToString() == "許珮珊" && cell4.ToString() != "院外適應")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -611,7 +637,7 @@ namespace Xml2Excel
                         }
                         if (edate > originedate)
                         {
-                            edate = 30;
+                            edate = monthDays;
                         }
                         else
                         {
@@ -625,7 +651,7 @@ namespace Xml2Excel
                         }
                     }
 
-                    if (cell1.ToString() == "陳柏偉")
+                    if (cell1.ToString() == "陳柏偉" && cell4.ToString() != "院外適應")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -640,7 +666,7 @@ namespace Xml2Excel
                         }
                         if (edate > originedate)
                         {
-                            edate = 30;
+                            edate = monthDays;
                         }
                         else
                         {
@@ -654,7 +680,7 @@ namespace Xml2Excel
                         }
                     }
 
-                    if (cell1.ToString() == "林典雍")
+                    if (cell1.ToString() == "林典雍" && cell4.ToString() != "院外適應")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -669,7 +695,7 @@ namespace Xml2Excel
                         }
                         if (edate > originedate)
                         {
-                            edate = 30;
+                            edate = monthDays;
                         }
                         else
                         {
@@ -683,7 +709,7 @@ namespace Xml2Excel
                         }
                     }
 
-                    if (cell1.ToString() == "詹永騰")
+                    if (cell1.ToString() == "詹永騰" && cell4.ToString() != "院外適應")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -698,7 +724,7 @@ namespace Xml2Excel
                         }
                         if (edate > originedate)
                         {
-                            edate = 30;
+                            edate = monthDays;
                         }
                         else
                         {
@@ -715,7 +741,7 @@ namespace Xml2Excel
                 }
             }
 
-            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "住院加總" + DateTime.Now.ToString("yyyy-M-d" + "HH-mm-ss") + ".xls";
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "住院加總" + DateTime.Now.ToString("yyyyMMdd" + "-" + "HHmmss") + ".xls";
             //MessageBox.Show(filename);
             FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
             workbook.Write(file);
@@ -815,7 +841,7 @@ namespace Xml2Excel
                             if (nodePdataName == "p16")
                                 doID = nodePdataValue.Trim();
                         }
-                       
+
                         if (orderCode != null)
                         {
 

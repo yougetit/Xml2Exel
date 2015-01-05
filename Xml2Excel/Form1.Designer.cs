@@ -126,7 +126,7 @@
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(94, 34);
             this.button7.TabIndex = 10;
-            this.button7.Text = "住院日數統計";
+            this.button7.Text = "住院日數明細";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
