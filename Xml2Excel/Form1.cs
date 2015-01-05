@@ -439,9 +439,10 @@ namespace Xml2Excel
             sheet.GetRow(0).CreateCell(4).SetCellValue("入院日期"); //d10
             sheet.GetRow(0).CreateCell(5).SetCellValue("出院日期"); //d11
             sheet.GetRow(0).CreateCell(6).SetCellValue("主治醫師"); //d20
-            sheet.GetRow(0).CreateCell(7).SetCellValue("床號"); //p9
-            sheet.GetRow(0).CreateCell(8).SetCellValue("時間起"); //p14
-            sheet.GetRow(0).CreateCell(9).SetCellValue("時間迄"); //d28
+            sheet.GetRow(0).CreateCell(7).SetCellValue("醫令"); //p3
+            sheet.GetRow(0).CreateCell(8).SetCellValue("床號"); //p9
+            sheet.GetRow(0).CreateCell(9).SetCellValue("時間起"); //p14
+            sheet.GetRow(0).CreateCell(10).SetCellValue("時間迄"); //d28
 
             n = 0;
             rowNumber = 0;
@@ -526,7 +527,7 @@ namespace Xml2Excel
 
                         if (orderCode != null)
                         {
-                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && Convert.ToInt32(stime) < 1031100)
+                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && Convert.ToInt32(stime) < (1031100))
                             {
                                 n++;
                                 rowNumber++;
@@ -537,9 +538,10 @@ namespace Xml2Excel
                                 sheet.GetRow(rowNumber).CreateCell(4).SetCellValue(indate);
                                 sheet.GetRow(rowNumber).CreateCell(5).SetCellValue(outdate);
                                 sheet.GetRow(rowNumber).CreateCell(6).SetCellValue(dr);
-                                sheet.GetRow(rowNumber).CreateCell(7).SetCellValue(bedno);
-                                sheet.GetRow(rowNumber).CreateCell(8).SetCellValue(stime);
-                                sheet.GetRow(rowNumber).CreateCell(9).SetCellValue(etime);
+                                sheet.GetRow(rowNumber).CreateCell(7).SetCellValue(orderCode);
+                                sheet.GetRow(rowNumber).CreateCell(8).SetCellValue(bedno);
+                                sheet.GetRow(rowNumber).CreateCell(9).SetCellValue(stime);
+                                sheet.GetRow(rowNumber).CreateCell(10).SetCellValue(etime);
                             }
                         }
                     }
@@ -582,12 +584,13 @@ namespace Xml2Excel
             int sdate, edate; //時間起迄
             int n;
 
-
+            int originsdate = 1031001;
+            int originedate = 1031031;
             for (int rowNumber1 = 1; rowNumber1 < sworkbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
             {
-                var cell1 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(4); //主治醫師
-                var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(6); //主治醫師
-                var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(7); //主治醫師
+                var cell1 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(6); //主治醫師
+                var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(9); //主治醫師
+                var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(10); //主治醫師
 
 
                 if (cell1 != null)
@@ -598,21 +601,21 @@ namespace Xml2Excel
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
 
-                        if (sdate < 1031101)
+                        if (sdate < originsdate)
                         {
                             sdate = 1;
                         }
                         else
                         {
-                            sdate = sdate - 1031100;
+                            sdate = sdate - (originsdate - 1);
                         }
-                        if (edate > 1031130)
+                        if (edate > originedate)
                         {
                             edate = 30;
                         }
                         else
                         {
-                            edate = edate - 1031100;
+                            edate = edate - (originsdate - 1);
                         }
 
                         for (int i = sdate; i <= edate; i++)
@@ -627,21 +630,21 @@ namespace Xml2Excel
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
 
-                        if (sdate < 1031101)
+                        if (sdate < originsdate)
                         {
                             sdate = 1;
                         }
                         else
                         {
-                            sdate = sdate - 1031100;
+                            sdate = sdate - (originsdate - 1);
                         }
-                        if (edate > 1031130)
+                        if (edate > originedate)
                         {
                             edate = 30;
                         }
                         else
                         {
-                            edate = edate - 1031100;
+                            edate = edate - (originsdate - 1);
                         }
 
                         for (int i = sdate; i <= edate; i++)
@@ -656,21 +659,21 @@ namespace Xml2Excel
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
 
-                        if (sdate < 1031101)
+                        if (sdate < originsdate)
                         {
                             sdate = 1;
                         }
                         else
                         {
-                            sdate = sdate - 1031100;
+                            sdate = sdate - (originsdate - 1);
                         }
-                        if (edate > 1031130)
+                        if (edate > originedate)
                         {
                             edate = 30;
                         }
                         else
                         {
-                            edate = edate - 1031100;
+                            edate = edate - (originsdate - 1);
                         }
 
                         for (int i = sdate; i <= edate; i++)
@@ -685,21 +688,21 @@ namespace Xml2Excel
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
 
-                        if (sdate < 1031101)
+                        if (sdate < originsdate)
                         {
                             sdate = 1;
                         }
                         else
                         {
-                            sdate = sdate - 1031100;
+                            sdate = sdate - (originsdate - 1);
                         }
-                        if (edate > 1031130)
+                        if (edate > originedate)
                         {
                             edate = 30;
                         }
                         else
                         {
-                            edate = edate - 1031100;
+                            edate = edate - (originsdate - 1);
                         }
 
                         for (int i = sdate; i <= edate; i++)
