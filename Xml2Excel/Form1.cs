@@ -444,7 +444,7 @@ namespace Xml2Excel
             sheet.GetRow(0).CreateCell(9).SetCellValue("時間起"); //p14
             sheet.GetRow(0).CreateCell(10).SetCellValue("時間迄"); //d28
             sheet.GetRow(0).CreateCell(11).SetCellValue("天數"); //d28
-          
+
 
             HSSFCellStyle cs = (HSSFCellStyle)workbook.CreateCellStyle();
             //Format格式為數字
@@ -542,7 +542,7 @@ namespace Xml2Excel
 
                         if (orderCode != null)
                         {
-                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(stime) < 1031200))
+                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(stime) < 1031100))
                             {
                                 if (orderCode == "03057B")
                                     orderCode = "急性";
@@ -576,7 +576,7 @@ namespace Xml2Excel
                 }
             }
 
-            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "住院明細" + DateTime.Now.ToString("yyyy-M-d" + "HH-mm-ss") + ".xls";
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "住院天數明細" + DateTime.Now.ToString("yyyy-M-d" + "HH-mm-ss") + ".xls";
             //MessageBox.Show(filename);
             FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
             workbook.Write(file);
@@ -609,8 +609,8 @@ namespace Xml2Excel
             int sdate, edate; //時間起迄
             int n;
 
-            int originsdate = 1031101;
-            int originedate = 1031130;
+            int originsdate = 1031001;
+            int originedate = 1031031;
             int monthDays = originedate - originsdate + 1;
             for (int rowNumber1 = 1; rowNumber1 < sworkbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
             {
@@ -618,11 +618,11 @@ namespace Xml2Excel
                 var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(9); //時間起
                 var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(10); //時間迄
                 var cell4 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(7); //急、慢、院外適應
-                
+
                 if (cell1 != null)
                 {
                     //MessageBox.Show(cell1.ToString());
-                    if (cell1.ToString() == "許珮珊" && cell4.ToString() != "院外適應")
+                    if (cell1.ToString() == "許珮珊")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -651,7 +651,7 @@ namespace Xml2Excel
                         }
                     }
 
-                    if (cell1.ToString() == "陳柏偉" && cell4.ToString() != "院外適應")
+                    if (cell1.ToString() == "陳柏偉")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -680,7 +680,7 @@ namespace Xml2Excel
                         }
                     }
 
-                    if (cell1.ToString() == "林典雍" && cell4.ToString() != "院外適應")
+                    if (cell1.ToString() == "林典雍")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -709,7 +709,7 @@ namespace Xml2Excel
                         }
                     }
 
-                    if (cell1.ToString() == "詹永騰" && cell4.ToString() != "院外適應")
+                    if (cell1.ToString() == "詹永騰")
                     {
                         sdate = Convert.ToInt32(cell2.ToString());
                         edate = Convert.ToInt32(cell3.ToString());
@@ -874,6 +874,360 @@ namespace Xml2Excel
             file.Close();
             MessageBox.Show("done!共" + n);
 
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            int sdate = 1031101;
+            int edate = 1031130;
+            drDaysPPF1("3", sdate, edate);
+            drDaysPPF1("6", sdate, edate);
+            drDaysPPF1("7", sdate, edate);
+            drDaysPPF1("8", sdate, edate);
+            drDaysPPF1("9", sdate, edate);
+            drDaysPPF1("1", sdate, edate); //10W
+
+            drDaysPPF2("3", sdate, edate);
+            drDaysPPF2("6", sdate, edate);
+            drDaysPPF2("7", sdate, edate);
+            drDaysPPF2("8", sdate, edate);
+            drDaysPPF2("9", sdate, edate);
+            drDaysPPF2("1", sdate, edate); //10W
+            MessageBox.Show("done");
+
+        }
+
+        private void drDaysPPF1(string rooms, int originsdates, int originedates)
+        {
+            IWorkbook workbook = new HSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("new sheet");
+
+            string room = rooms;//病房別
+
+            sheet.CreateRow(0).CreateCell(0).SetCellValue(room + "W");
+            sheet.CreateRow(1).CreateCell(0).SetCellValue("許珮珊");
+            sheet.CreateRow(2).CreateCell(0).SetCellValue("陳柏偉");
+            sheet.CreateRow(3).CreateCell(0).SetCellValue("林典雍");
+            sheet.CreateRow(4).CreateCell(0).SetCellValue("詹永騰");
+            for (int i = 1; i <= 31; i++)
+            {
+                sheet.GetRow(0).CreateCell(i).SetCellValue(i);
+                sheet.GetRow(1).CreateCell(i).SetCellValue(0);
+                sheet.GetRow(2).CreateCell(i).SetCellValue(0);
+                sheet.GetRow(3).CreateCell(i).SetCellValue(0);
+                sheet.GetRow(4).CreateCell(i).SetCellValue(0);
+            }
+
+            var sworkbook = InitializeWorkbook(textBox1.Text);
+            int sdate, edate; //時間起迄
+            int n;
+
+            int originsdate = originsdates;
+            int originedate = originedates;
+            int monthDays = originedate - originsdate + 1;
+            for (int rowNumber1 = 1; rowNumber1 < sworkbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
+            {
+                var cell1 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(6); //主治醫師
+                var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(9); //時間起
+                var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(10); //時間迄
+                var cell4 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(7); //急、慢、院外適應
+                var cell5 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(8).ToString().Substring(0, 1); //病房別
+
+
+                if (cell1 != null)
+                {
+                    if (cell4.ToString() == "院外適應")
+                    {
+                        if (cell1.ToString() == "許珮珊" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(1).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(1).GetCell(i).SetCellValue(n);
+                            }
+                        }
+
+                        if (cell1.ToString() == "陳柏偉" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(2).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(2).GetCell(i).SetCellValue(n);
+                            }
+                        }
+
+                        if (cell1.ToString() == "林典雍" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(3).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(3).GetCell(i).SetCellValue(n);
+                            }
+                        }
+
+                        if (cell1.ToString() == "詹永騰" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(4).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(4).GetCell(i).SetCellValue(n);
+                            }
+                        }
+                    }
+                }
+            }
+
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + room + "W醫師每日天數_院外適應" + DateTime.Now.ToString("yyyyMMdd" + "-" + "HHmmss") + ".xls";
+            //MessageBox.Show(filename);
+            FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            workbook.Write(file);
+            file.Close();
+        }
+        private void drDaysPPF2(string rooms, int originsdates, int originedates)
+        {
+            IWorkbook workbook = new HSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("new sheet");
+
+            string room = rooms;//病房別
+
+            sheet.CreateRow(0).CreateCell(0).SetCellValue(room + "W");
+            sheet.CreateRow(1).CreateCell(0).SetCellValue("許珮珊");
+            sheet.CreateRow(2).CreateCell(0).SetCellValue("陳柏偉");
+            sheet.CreateRow(3).CreateCell(0).SetCellValue("林典雍");
+            sheet.CreateRow(4).CreateCell(0).SetCellValue("詹永騰");
+            for (int i = 1; i <= 31; i++)
+            {
+                sheet.GetRow(0).CreateCell(i).SetCellValue(i);
+                sheet.GetRow(1).CreateCell(i).SetCellValue(0);
+                sheet.GetRow(2).CreateCell(i).SetCellValue(0);
+                sheet.GetRow(3).CreateCell(i).SetCellValue(0);
+                sheet.GetRow(4).CreateCell(i).SetCellValue(0);
+            }
+
+            var sworkbook = InitializeWorkbook(textBox1.Text);
+            int sdate, edate; //時間起迄
+            int n;
+
+            int originsdate = originsdates;
+            int originedate = originedates;
+            int monthDays = originedate - originsdate + 1;
+            for (int rowNumber1 = 1; rowNumber1 < sworkbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
+            {
+                var cell1 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(6); //主治醫師
+                var cell2 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(9); //時間起
+                var cell3 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(10); //時間迄
+                var cell4 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(7); //急、慢、院外適應
+                var cell5 = sworkbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(8).ToString().Substring(0, 1); //病房別
+
+
+                if (cell1 != null)
+                {
+                    if (cell4.ToString() != "院外適應") //不含院外適應
+                    {
+                        if (cell1.ToString() == "許珮珊" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(1).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(1).GetCell(i).SetCellValue(n);
+                            }
+                        }
+
+                        if (cell1.ToString() == "陳柏偉" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(2).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(2).GetCell(i).SetCellValue(n);
+                            }
+                        }
+
+                        if (cell1.ToString() == "林典雍" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(3).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(3).GetCell(i).SetCellValue(n);
+                            }
+                        }
+
+                        if (cell1.ToString() == "詹永騰" && cell5 == room)
+                        {
+                            sdate = Convert.ToInt32(cell2.ToString());
+                            edate = Convert.ToInt32(cell3.ToString());
+
+                            if (sdate < originsdate)
+                            {
+                                sdate = 1;
+                            }
+                            else
+                            {
+                                sdate = sdate - (originsdate - 1);
+                            }
+                            if (edate > originedate)
+                            {
+                                edate = monthDays;
+                            }
+                            else
+                            {
+                                edate = edate - (originsdate - 1);
+                            }
+
+                            for (int i = sdate; i <= edate; i++)
+                            {
+                                n = Convert.ToInt32(sheet.GetRow(4).GetCell(i).ToString()) + 1;
+                                sheet.GetRow(4).GetCell(i).SetCellValue(n);
+                            }
+                        }
+                    }
+                }
+            }
+
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + room + "W醫師每日天數_不含院外適應" + DateTime.Now.ToString("yyyyMMdd" + "-" + "HHmmss") + ".xls";
+            //MessageBox.Show(filename);
+            FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            workbook.Write(file);
+            file.Close();
         }
     }
 }
