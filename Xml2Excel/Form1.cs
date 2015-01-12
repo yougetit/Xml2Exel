@@ -446,12 +446,6 @@ namespace Xml2Excel
             sheet.GetRow(0).CreateCell(10).SetCellValue("時間迄"); //d28
             sheet.GetRow(0).CreateCell(11).SetCellValue("天數"); //d28
 
-
-            HSSFCellStyle cs = (HSSFCellStyle)workbook.CreateCellStyle();
-            //Format格式為數字
-            cs.DataFormat = HSSFDataFormat.GetBuiltinFormat("0");
-
-
             n = 0;
             rowNumber = 0;
 
@@ -560,16 +554,12 @@ namespace Xml2Excel
                                 sheet.GetRow(rowNumber).CreateCell(2).SetCellValue(serNo);
                                 sheet.GetRow(rowNumber).CreateCell(3).SetCellValue(name);
                                 sheet.GetRow(rowNumber).CreateCell(4).SetCellValue(indate);
-                                sheet.GetRow(rowNumber).GetCell(4).CellStyle = cs;
                                 sheet.GetRow(rowNumber).CreateCell(5).SetCellValue(outdate);
-                                sheet.GetRow(rowNumber).GetCell(5).CellStyle = cs;
                                 sheet.GetRow(rowNumber).CreateCell(6).SetCellValue(dr);
                                 sheet.GetRow(rowNumber).CreateCell(7).SetCellValue(orderCode);
                                 sheet.GetRow(rowNumber).CreateCell(8).SetCellValue(bedno);
                                 sheet.GetRow(rowNumber).CreateCell(9).SetCellValue(stime);
-                                sheet.GetRow(rowNumber).GetCell(9).CellStyle = cs;
                                 sheet.GetRow(rowNumber).CreateCell(10).SetCellValue(etime);
-                                sheet.GetRow(rowNumber).GetCell(10).CellStyle = cs;
                             }
                         }
                     }
@@ -1416,6 +1406,177 @@ namespace Xml2Excel
                     return value;
                 }
             }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            IWorkbook workbook = new HSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("new sheet");
+
+            sheet.CreateRow(0).CreateCell(0).SetCellValue("案件分類"); //d1
+            sheet.CreateRow(1).CreateCell(0).SetCellValue("流水號");  //d2
+            sheet.CreateRow(2).CreateCell(0).SetCellValue("姓名"); //d103
+            sheet.CreateRow(3).CreateCell(0).SetCellValue("身份證");  //d3
+            sheet.CreateRow(4).CreateCell(0).SetCellValue("負擔別");  //d4
+            sheet.CreateRow(5).CreateCell(0).SetCellValue("住院日期");  //d10
+            sheet.CreateRow(6).CreateCell(0).SetCellValue("出院日期");  //d11
+            sheet.CreateRow(7).CreateCell(0).SetCellValue("申報起日");  //d12
+            sheet.CreateRow(8).CreateCell(0).SetCellValue("申報迄日");  //d13
+            sheet.CreateRow(9).CreateCell(0).SetCellValue("急性床號");  
+            sheet.CreateRow(10).CreateCell(0).SetCellValue("急性日數");  //d14
+            sheet.CreateRow(11).CreateCell(0).SetCellValue("慢性床號");
+            sheet.CreateRow(12).CreateCell(0).SetCellValue("慢性日數");  //d15
+            sheet.CreateRow(13).CreateCell(0).SetCellValue("主治醫師");  //d20
+            sheet.CreateRow(14).CreateCell(0).SetCellValue("診察費");  //d66
+            sheet.CreateRow(15).CreateCell(0).SetCellValue("病房費");  //d67
+            sheet.CreateRow(16).CreateCell(0).SetCellValue("膳食費");  //d68
+            sheet.CreateRow(17).CreateCell(0).SetCellValue("檢查費");  //d69
+            sheet.CreateRow(18).CreateCell(0).SetCellValue("放射線診療費");  //d70
+            sheet.CreateRow(19).CreateCell(0).SetCellValue("治療處置費");  //d71
+            sheet.CreateRow(20).CreateCell(0).SetCellValue("手術費");  //d72
+            sheet.CreateRow(21).CreateCell(0).SetCellValue("復健治療費");  //d73
+            sheet.CreateRow(22).CreateCell(0).SetCellValue("血液血漿費");  //d74
+            sheet.CreateRow(23).CreateCell(0).SetCellValue("血液透析費");  //d75
+            sheet.CreateRow(24).CreateCell(0).SetCellValue("麻醉費");  //d76
+            sheet.CreateRow(25).CreateCell(0).SetCellValue("特殊材料費");  //d77
+            sheet.CreateRow(26).CreateCell(0).SetCellValue("藥費");  //d78
+            sheet.CreateRow(27).CreateCell(0).SetCellValue("藥事服務費");  //d79
+            sheet.CreateRow(28).CreateCell(0).SetCellValue("精神科治療費");  //d80
+            sheet.CreateRow(29).CreateCell(0).SetCellValue("注射技術費");  //d81
+            sheet.CreateRow(30).CreateCell(0).SetCellValue("醫療費用合計");  //d83
+            sheet.CreateRow(31).CreateCell(0).SetCellValue("部分負擔");  //d84
+            sheet.CreateRow(32).CreateCell(0).SetCellValue("申請點數");  //d85
+
+
+            n = 0;
+            rowNumber = 0;
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(textBox1.Text);
+
+            XmlNode tdataNode = xmlDoc.SelectSingleNode("inpatient/tdata");
+            XmlNodeList tdataNodeChildNodeList = tdataNode.ChildNodes;
+
+            foreach (XmlNode tNode in tdataNodeChildNodeList)
+            {
+                if (tNode.Name == "t3")
+                {
+                    year = tNode.InnerText;
+                }
+            }
+
+            XmlNodeList nodeLists = xmlDoc.SelectNodes("inpatient/ddata");
+            foreach (XmlNode node in nodeLists)
+            {
+
+                XmlNode childNodeHead = node.SelectSingleNode("dhead");
+                XmlNodeList dheadNodeList = childNodeHead.ChildNodes;
+                foreach (XmlNode child in dheadNodeList)
+                {
+                    if (child.Name == "d2")//流水號
+                        serNo = child.InnerText;
+                    if (child.Name == "d1") //案件分類
+                        caseNo = child.InnerText;
+                }
+
+                XmlNode childNodeBody = node.SelectSingleNode("dbody");
+                XmlNodeList dbodyNodeList = childNodeBody.ChildNodes;
+                outdate = "";
+                foreach (XmlNode dbodyChild in dbodyNodeList)
+                {
+
+                    if (dbodyChild.Name == "d3") //身份證
+                    {
+                        pID = dbodyChild.InnerText;
+                    }
+                    if (dbodyChild.Name == "d103") //姓名
+                    {
+                        name = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "d10") //入院日期
+                    {
+                        indate = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "d11") //出院日期
+                    {
+                        outdate = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "d20") //主治醫師
+                    {
+                        if (dbodyChild.InnerText == "S122409549")
+                            dr = "林典雍";
+                        if (dbodyChild.InnerText == "P122217324")
+                            dr = "陳柏偉";
+                        if (dbodyChild.InnerText == "N122802895")
+                            dr = "詹永騰";
+                        if (dbodyChild.InnerText == "N220234435")
+                            dr = "許珮珊";
+                    }
+
+                    if (dbodyChild.Name == "pdata")
+                    {
+                        XmlNodeList pdataList = dbodyChild.ChildNodes;
+                        foreach (XmlNode childPdata in pdataList)
+                        {
+
+                            string nodePdataName = childPdata.Name;
+                            string nodePdataValue = childPdata.InnerText;
+                            //MessageBox.Show(nodePdataName + "_" + nodePdataValue);
+                            if (nodePdataName == "p1") //醫令序
+                                orderList = nodePdataValue.Trim();
+                            if (nodePdataName == "p3") //醫令
+                                orderCode = nodePdataValue.Trim();
+                            if (nodePdataName == "p9") //床號
+                                bedno = nodePdataValue.Trim();
+                            if (nodePdataName == "p14") //時間起
+                                stime = nodePdataValue.Trim().Substring(0, 7);
+                            if (nodePdataName == "p15") //時間迄
+                                etime = nodePdataValue.Trim().Substring(0, 7);
+                        }
+
+                        if (orderCode != null)
+                        {
+                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(stime) < 1040100))
+                            //if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B"))
+                            {
+                                if (orderCode == "03057B")
+                                    orderCode = "急性";
+                                if (orderCode == "04002B")
+                                    orderCode = "慢性";
+                                if (orderCode == "04011B")
+                                    orderCode = "院外適應";
+                                n++;
+                                rowNumber++;
+                                sheet.CreateRow(rowNumber).CreateCell(0).SetCellValue(pID);
+                                sheet.GetRow(rowNumber).CreateCell(1).SetCellValue(caseNo);
+                                sheet.GetRow(rowNumber).CreateCell(2).SetCellValue(serNo);
+                                sheet.GetRow(rowNumber).CreateCell(3).SetCellValue(name);
+                                sheet.GetRow(rowNumber).CreateCell(4).SetCellValue(indate);
+                                sheet.GetRow(rowNumber).CreateCell(5).SetCellValue(outdate);
+                                sheet.GetRow(rowNumber).CreateCell(6).SetCellValue(dr);
+                                sheet.GetRow(rowNumber).CreateCell(7).SetCellValue(orderCode);
+                                sheet.GetRow(rowNumber).CreateCell(8).SetCellValue(bedno);
+                                sheet.GetRow(rowNumber).CreateCell(9).SetCellValue(stime);
+                                sheet.GetRow(rowNumber).CreateCell(10).SetCellValue(etime);
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show(pID + "_" + caseNo + "_" + serNo + "_" + orderList + "_" + orderCode + "_" + amount + "_" + cashPoint + "_" + doID);
+
+                }
+            }
+
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "住院天數明細" + DateTime.Now.ToString("yyyy-M-d" + "HH-mm-ss") + ".xls";
+            //MessageBox.Show(filename);
+            FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            workbook.Write(file);
+            file.Close();
+            MessageBox.Show("done!共" + n);
+
         }
     }
 }
