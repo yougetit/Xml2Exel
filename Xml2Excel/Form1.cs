@@ -10,6 +10,7 @@ using NPOI.SS.UserModel;
 using NPOI.HSSF.UserModel;
 using System.IO;
 using System.Xml;
+using System.Data.SqlClient;
 
 namespace Xml2Excel
 {
@@ -542,7 +543,9 @@ namespace Xml2Excel
 
                         if (orderCode != null)
                         {
-                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(stime) < 1031100))
+                            //if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(etime) > 1031200))
+                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B"))
+
                             {
                                 if (orderCode == "03057B")
                                     orderCode = "急性";
@@ -1228,6 +1231,191 @@ namespace Xml2Excel
             FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
             workbook.Write(file);
             file.Close();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            //建立新excel檔
+
+            IWorkbook workbook = new HSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("new sheet");
+
+            sheet.CreateRow(0).CreateCell(0).SetCellValue("身分證");
+            sheet.GetRow(0).CreateCell(1).SetCellValue("姓名");
+            sheet.GetRow(0).CreateCell(2).SetCellValue("案件分類");
+            sheet.GetRow(0).CreateCell(3).SetCellValue("流水號");
+            sheet.GetRow(0).CreateCell(4).SetCellValue("入院日期"); //d10
+            sheet.GetRow(0).CreateCell(5).SetCellValue("出院日期"); //d11
+            sheet.GetRow(0).CreateCell(6).SetCellValue("醫令序");
+            sheet.GetRow(0).CreateCell(7).SetCellValue("醫令代碼");
+            sheet.GetRow(0).CreateCell(8).SetCellValue("申報數量");
+            sheet.GetRow(0).CreateCell(9).SetCellValue("時間起"); //p14
+            sheet.GetRow(0).CreateCell(10).SetCellValue("時間迄"); //d28
+            sheet.GetRow(0).CreateCell(11).SetCellValue("申報金額");
+
+
+            n = 0;
+            rowNumber = 0;
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(textBox1.Text);
+
+            XmlNode tdataNode = xmlDoc.SelectSingleNode("inpatient/tdata");
+            XmlNodeList tdataNodeChildNodeList = tdataNode.ChildNodes;
+
+            foreach (XmlNode tNode in tdataNodeChildNodeList)
+            {
+                if (tNode.Name == "t3")
+                {
+                    year = tNode.InnerText;
+                }
+            }
+
+            XmlNodeList nodeLists = xmlDoc.SelectNodes("inpatient/ddata");
+            foreach (XmlNode node in nodeLists)
+            {
+
+                XmlNode childNodeHead = node.SelectSingleNode("dhead");
+                XmlNodeList dheadNodeList = childNodeHead.ChildNodes;
+                foreach (XmlNode child in dheadNodeList)
+                {
+                    if (child.Name == "d2")//流水號
+                        serNo = child.InnerText;
+                    if (child.Name == "d1") //案件分類
+                        caseNo = child.InnerText;
+                }
+
+                XmlNode childNodeBody = node.SelectSingleNode("dbody");
+                XmlNodeList dbodyNodeList = childNodeBody.ChildNodes;
+                outdate = "";
+                foreach (XmlNode dbodyChild in dbodyNodeList)
+                {
+                    if (dbodyChild.Name == "d3") //身份證
+                    {
+                        pID = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "d103") //姓名
+                    {
+                        name = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "d10") //入院日期
+                    {
+                        indate = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "d11") //出院日期
+                    {
+                        outdate = dbodyChild.InnerText;
+                    }
+
+                    if (dbodyChild.Name == "pdata")
+                    {
+                        XmlNodeList pdataList = dbodyChild.ChildNodes;
+                        foreach (XmlNode childPdata in pdataList)
+                        {
+
+                            string nodePdataName = childPdata.Name;
+                            string nodePdataValue = childPdata.InnerText;
+                            //MessageBox.Show(nodePdataName + "_" + nodePdataValue);
+                            if (nodePdataName == "p1")
+                                orderList = nodePdataValue.Trim();
+                            if (nodePdataName == "p3")
+                                orderCode = nodePdataValue.Trim();
+                            if (nodePdataName == "p16")
+                                amount = nodePdataValue.Trim();
+                            if (nodePdataName == "p18")
+                                cashPoint = nodePdataValue.Trim();
+                            if (nodePdataName == "p14") //時間起
+                                stime = nodePdataValue.Trim().Substring(0, 7);
+                            if (nodePdataName == "p15") //時間迄
+                                etime = nodePdataValue.Trim().Substring(0, 7);
+                        }
+                        string subOrderCode;
+                        if (orderCode != null)
+                        {
+                            subOrderCode = orderCode.Substring(0, 2);
+
+                            if (subOrderCode == "F0")
+                            {
+                                n++;
+                                rowNumber++;
+                                sheet.CreateRow(rowNumber).CreateCell(0).SetCellValue(pID);
+                                sheet.GetRow(rowNumber).CreateCell(1).SetCellValue(name);
+                                sheet.GetRow(rowNumber).CreateCell(2).SetCellValue(caseNo);
+                                sheet.GetRow(rowNumber).CreateCell(3).SetCellValue(serNo);
+                                sheet.GetRow(rowNumber).CreateCell(4).SetCellValue(indate);
+                                sheet.GetRow(rowNumber).CreateCell(5).SetCellValue(outdate);
+                                sheet.GetRow(rowNumber).CreateCell(6).SetCellValue(orderList);
+                                sheet.GetRow(rowNumber).CreateCell(7).SetCellValue(orderCode);
+                                sheet.GetRow(rowNumber).CreateCell(8).SetCellValue(amount);
+                                sheet.GetRow(rowNumber).CreateCell(9).SetCellValue(stime);
+                                sheet.GetRow(rowNumber).CreateCell(10).SetCellValue(etime);
+                                sheet.GetRow(rowNumber).CreateCell(11).SetCellValue(cashPoint);
+
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show(pID + "_" + caseNo + "_" + serNo + "_" + orderList + "_" + orderCode + "_" + amount + "_" + cashPoint + "_" + doID);
+
+                }
+            }
+
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "膳食" + DateTime.Now.ToString("yyyy-MM-dd" + "_" +  "HH-mm-ss") + ".xls";
+            //MessageBox.Show(filename);
+            FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            workbook.Write(file);
+            file.Close();
+            MessageBox.Show("done!共" + n);
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            string connStr = "Data Source=192.168.10.2;Initial Catalog=GHHP;Persist Security Info=True;User ID=sa;Password=1999";
+            var workbook = InitializeWorkbook(textBox1.Text);
+            for (int rowNumber1 = 1; rowNumber1 < workbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
+            {
+                var id = workbook.GetSheetAt(0).GetRow(rowNumber1).GetCell(0).ToString();
+                var sqlstring = "SELECT [medrec] FROM [dbo].[allpat] where id ='" + id + "'";
+                workbook.GetSheetAt(0).GetRow(rowNumber1).CreateCell(1).SetCellValue(ExecuteScalar(connStr, sqlstring).ToString());
+            }
+
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\轉檔\" + year + "膳食(含病歷)" + DateTime.Now.ToString("yyyy-MM-dd" + "_" + "HH-mm-ss") + ".xls";
+            FileStream file = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            workbook.Write(file);
+            file.Close();
+            MessageBox.Show("done!");
+        }
+
+        public static int ExecuteScalar(string ConnString, string sqlstring)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sqlstring, conn);
+                object obj = cmd.ExecuteScalar();
+                if (obj == System.DBNull.Value | obj == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    int value = (Int32)obj;
+                    return value;
+                }
+            }
         }
     }
 }
