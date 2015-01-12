@@ -543,8 +543,8 @@ namespace Xml2Excel
 
                         if (orderCode != null)
                         {
-                            //if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(etime) > 1031200))
-                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B"))
+                            if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B") && (Convert.ToInt32(stime) < 1040100))
+                            //if ((orderCode == "03057B" || orderCode == "04002B" || orderCode == "04011B"))
 
                             {
                                 if (orderCode == "03057B")
@@ -612,8 +612,8 @@ namespace Xml2Excel
             int sdate, edate; //時間起迄
             int n;
 
-            int originsdate = 1031001;
-            int originedate = 1031031;
+            int originsdate = 1031201;
+            int originedate = 1031231;
             int monthDays = originedate - originsdate + 1;
             for (int rowNumber1 = 1; rowNumber1 < sworkbook.GetSheetAt(0).PhysicalNumberOfRows; rowNumber1++)
             {
@@ -881,8 +881,8 @@ namespace Xml2Excel
 
         private void button10_Click(object sender, EventArgs e)
         {
-            int sdate = 1031101;
-            int edate = 1031130;
+            int sdate = 1031201;
+            int edate = 1031231;
             drDaysPPF1("3", sdate, edate);
             drDaysPPF1("6", sdate, edate);
             drDaysPPF1("7", sdate, edate);
