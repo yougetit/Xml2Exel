@@ -894,21 +894,21 @@ namespace Xml2Excel
         {
             IWorkbook workbook = new HSSFWorkbook();
             ISheet sheet = workbook.CreateSheet("new sheet");
-
+            int days = originedates - originsdates + 1;
             string room = rooms;//病房別
 
             sheet.CreateRow(0).CreateCell(0).SetCellValue(room + "W");
-            sheet.CreateRow(1).CreateCell(0).SetCellValue("許珮珊");
-            sheet.CreateRow(2).CreateCell(0).SetCellValue("陳柏偉");
-            sheet.CreateRow(3).CreateCell(0).SetCellValue("林典雍");
-            sheet.CreateRow(4).CreateCell(0).SetCellValue("詹永騰");
-            for (int i = 1; i <= 31; i++)
+            sheet.GetRow(0).CreateCell(1).SetCellValue("許珮珊");
+            sheet.GetRow(0).CreateCell(2).SetCellValue("陳柏偉");
+            sheet.GetRow(0).CreateCell(3).SetCellValue("林典雍");
+            sheet.GetRow(0).CreateCell(4).SetCellValue("詹永騰");
+            for (int i = 1; i <= days; i++)
             {
-                sheet.GetRow(0).CreateCell(i).SetCellValue(i);
-                sheet.GetRow(1).CreateCell(i).SetCellValue(0);
-                sheet.GetRow(2).CreateCell(i).SetCellValue(0);
-                sheet.GetRow(3).CreateCell(i).SetCellValue(0);
-                sheet.GetRow(4).CreateCell(i).SetCellValue(0);
+                sheet.CreateRow(i).CreateCell(0).SetCellValue(i);
+                sheet.GetRow(i).CreateCell(1).SetCellValue(0);
+                sheet.GetRow(i).CreateCell(2).SetCellValue(0);
+                sheet.GetRow(i).CreateCell(3).SetCellValue(0);
+                sheet.GetRow(i).CreateCell(4).SetCellValue(0);
             }
 
             var sworkbook = InitializeWorkbook(textBox1.Text);
@@ -955,8 +955,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(1).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(1).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(1).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(1).SetCellValue(n);
                             }
                         }
 
@@ -984,8 +984,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(2).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(2).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(2).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(2).SetCellValue(n);
                             }
                         }
 
@@ -1013,8 +1013,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(3).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(3).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(3).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(3).SetCellValue(n);
                             }
                         }
 
@@ -1042,8 +1042,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(4).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(4).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(4).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(4).SetCellValue(n);
                             }
                         }
                     }
@@ -1060,21 +1060,21 @@ namespace Xml2Excel
         {
             IWorkbook workbook = new HSSFWorkbook();
             ISheet sheet = workbook.CreateSheet("new sheet");
-
+            int days = originedates - originsdates + 1;
             string room = rooms;//病房別
 
             sheet.CreateRow(0).CreateCell(0).SetCellValue(room + "W");
-            sheet.CreateRow(1).CreateCell(0).SetCellValue("許珮珊");
-            sheet.CreateRow(2).CreateCell(0).SetCellValue("陳柏偉");
-            sheet.CreateRow(3).CreateCell(0).SetCellValue("林典雍");
-            sheet.CreateRow(4).CreateCell(0).SetCellValue("詹永騰");
-            for (int i = 1; i <= 31; i++)
+            sheet.GetRow(0).CreateCell(1).SetCellValue("許珮珊");
+            sheet.GetRow(0).CreateCell(2).SetCellValue("陳柏偉");
+            sheet.GetRow(0).CreateCell(3).SetCellValue("林典雍");
+            sheet.GetRow(0).CreateCell(4).SetCellValue("詹永騰");
+            for (int i = 1; i <= days; i++)
             {
-                sheet.GetRow(0).CreateCell(i).SetCellValue(i);
-                sheet.GetRow(1).CreateCell(i).SetCellValue(0);
-                sheet.GetRow(2).CreateCell(i).SetCellValue(0);
-                sheet.GetRow(3).CreateCell(i).SetCellValue(0);
-                sheet.GetRow(4).CreateCell(i).SetCellValue(0);
+                sheet.CreateRow(i).CreateCell(0).SetCellValue(i);
+                sheet.GetRow(i).CreateCell(1).SetCellValue(0);
+                sheet.GetRow(i).CreateCell(2).SetCellValue(0);
+                sheet.GetRow(i).CreateCell(3).SetCellValue(0);
+                sheet.GetRow(i).CreateCell(4).SetCellValue(0);
             }
 
             var sworkbook = InitializeWorkbook(textBox1.Text);
@@ -1095,7 +1095,7 @@ namespace Xml2Excel
 
                 if (cell1 != null)
                 {
-                    if (cell4.ToString() != "院外適應") //不含院外適應
+                    if (cell4.ToString() != "院外適應")
                     {
                         if (cell1.ToString() == "許珮珊" && cell5 == room)
                         {
@@ -1121,8 +1121,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(1).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(1).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(1).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(1).SetCellValue(n);
                             }
                         }
 
@@ -1150,8 +1150,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(2).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(2).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(2).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(2).SetCellValue(n);
                             }
                         }
 
@@ -1179,8 +1179,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(3).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(3).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(3).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(3).SetCellValue(n);
                             }
                         }
 
@@ -1208,8 +1208,8 @@ namespace Xml2Excel
 
                             for (int i = sdate; i <= edate; i++)
                             {
-                                n = Convert.ToInt32(sheet.GetRow(4).GetCell(i).ToString()) + 1;
-                                sheet.GetRow(4).GetCell(i).SetCellValue(n);
+                                n = Convert.ToInt32(sheet.GetRow(i).GetCell(4).ToString()) + 1;
+                                sheet.GetRow(i).GetCell(4).SetCellValue(n);
                             }
                         }
                     }
